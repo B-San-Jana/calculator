@@ -15,6 +15,19 @@
       font-family: 'Segoe UI', Tahoma, sans-serif;
     }
 
+    .exit-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ff6b81;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
     .welcome-screen {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -38,12 +51,8 @@
     }
 
     @keyframes float {
-      0% {
-        transform: translateY(100vh) rotate(0deg);
-      }
-      100% {
-        transform: translateY(-100vh) rotate(360deg);
-      }
+      0% { transform: translateY(100vh) rotate(0deg); }
+      100% { transform: translateY(-100vh) rotate(360deg); }
     }
 
     .welcome-screen.split {
@@ -53,8 +62,9 @@
     .main-container {
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100%;
+      align-items: flex-start;
+      gap: 40px;
+      position: relative;
     }
 
     .calculator {
@@ -62,18 +72,18 @@
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-      width: 360px; /* compact */
+      width: 360px;
       max-width: 90%;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.5s ease;
-      position: absolute;
+      transform: translateY(30px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .calculator.active {
       opacity: 1;
       pointer-events: auto;
-      position: relative;
+      transform: translateY(0);
     }
 
     .display {
@@ -104,6 +114,7 @@
       border-radius: 8px;
       border: none;
       transition: 0.2s;
+      white-space: nowrap;
       cursor: pointer;
     }
 
@@ -117,6 +128,8 @@
   </style>
 </head>
 <body>
+
+  <button class="exit-btn" onclick="window.close()">Exit</button>
 
   <!-- Welcome -->
   <div class="welcome-screen" id="welcome">Welcome to Calculator!</div>
@@ -299,11 +312,13 @@
       return n * factorial(n - 1);
     }
 
+    // Keyboard input
     document.addEventListener('keydown', e => {
-      if (e.key.match(/[0-9+\-*/().^%!]/)) {
-        append(e.key === '^' ? '**' : e.key);
-      } else if (e.key === 'Enter') {
+      if (e.key === 'Enter') {
+        e.preventDefault();
         calculate();
+      } else if (/[0-9+\-*/().^%!]/.test(e.key)) {
+        append(e.key === '^' ? '**' : e.key);
       } else if (e.key === 'Backspace') {
         backspace();
       } else if (e.key === 'Delete') {
@@ -311,5 +326,6 @@
       }
     });
   </script>
+
 </body>
 </html>
