@@ -2,127 +2,135 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Fully Working Calculator</title>
+  <title>Full Calculator</title>
   <style>
     body {
       margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       height: 100vh;
       overflow: hidden;
       background: linear-gradient(135deg, lavender, #ffb6c1);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
     }
-
-    .welcome-screen {
+    .welcome {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: linear-gradient(135deg, lavender, #ffb6c1);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       font-size: 3rem;
       font-weight: bold;
-      z-index: 10;
+      z-index: 20;
       overflow: hidden;
-      transition: transform 1s ease;
     }
-
     .symbol {
       position: absolute;
       font-size: 2rem;
-      opacity: 0.2;
-      animation: float 10s infinite linear;
-      pointer-events: none;
+      color: rgba(0,0,0,0.1);
+      animation: float 20s linear infinite;
     }
-
     @keyframes float {
-      0% {
-        transform: translateY(100vh) rotate(0deg);
-      }
-      100% {
-        transform: translateY(-100vh) rotate(360deg);
-      }
+      0% { transform: translateY(100vh) rotate(0deg); }
+      100% { transform: translateY(-100vh) rotate(360deg); }
     }
-
-    .welcome-screen.split {
-      transform: translateY(-100%);
+    .hidden {
+      display: none;
     }
-
     .main-container {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100%;
-      position: relative;
     }
-
     .calculator {
       background: #f3e8ff;
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-      width: 360px; /* slightly smaller */
-      max-width: 90%;
+      width: 350px;
+      transition: opacity 0.5s, transform 0.5s;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      position: absolute;
     }
-
     .calculator.active {
       opacity: 1;
       pointer-events: auto;
-      position: relative;
-      transform: translateY(0);
     }
-
     .display {
-      background: #ffffffee;
+      background: #ffffffdd;
       border-radius: 10px;
       padding: 15px;
       text-align: right;
       margin-bottom: 15px;
       min-height: 60px;
-      word-break: break-word;
     }
-
     .expression { font-size: 1rem; color: #555; }
     .result { font-size: 1.5rem; font-weight: bold; color: #222; }
-
     .button-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 8px;
     }
-
     .calc-btn {
       flex: 1 1 22%;
       min-width: 50px;
       padding: 12px;
       font-size: 1rem;
-      border-radius: 8px;
       border: none;
+      border-radius: 8px;
       transition: 0.2s;
-      white-space: nowrap;
-      cursor: pointer;
     }
-
     .calc-btn:active { transform: scale(0.95); }
-
     .number-btn { background: #add8e6; }
-    .clear-btn, .back-btn { background: #ff6b81; color: #fff; }
-    .operator-btn, .scientific-btn { background: #9370db; color: #fff; }
+    .clear-btn, .backspace-btn { background: #ff6b81; color: #fff; }
+    .operator-btn { background: #9370db; color: #fff; }
+    .scientific-btn { background: #20b2aa; color: #fff; }
     .equal-btn { background: #f1c40f; color: #fff; }
     .switch-btn { background: #808080; color: #fff; flex: 1 1 45%; }
+
+    .exit-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ff6b81;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: background 0.3s, transform 0.2s;
+      z-index: 30;
+    }
+    .exit-btn:hover {
+      background: #e55060;
+      transform: scale(1.05);
+    }
+    .exit-btn:active {
+      transform: scale(0.95);
+    }
   </style>
 </head>
 <body>
 
   <!-- Welcome -->
-  <div class="welcome-screen" id="welcome">Welcome to Calculator!</div>
+  <div class="welcome" id="welcome">
+    <strong>Welcome to Calculator!</strong>
+  </div>
+
+  <!-- Floating symbols -->
+  <script>
+    for (let i = 0; i < 30; i++) {
+      const s = document.createElement('div');
+      s.className = 'symbol';
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.animationDuration = (10 + Math.random() * 20) + 's';
+      s.innerText = ['+', '-', '*', '/', '√', '∫', 'π', '^', '!'][Math.floor(Math.random() * 9)];
+      document.getElementById('welcome').appendChild(s);
+    }
+  </script>
 
   <!-- Main Container -->
   <div class="main-container">
@@ -134,34 +142,33 @@
       </div>
       <div class="button-row">
         <button class="calc-btn clear-btn" onclick="clearCalc()">AC</button>
-        <button class="calc-btn back-btn" onclick="backspace()">←</button>
+        <button class="calc-btn backspace-btn" onclick="backspace()">⌫</button>
         <button class="calc-btn operator-btn" onclick="append('%')">%</button>
-        <button class="calc-btn operator-btn" onclick="append('/')">/</button>
+        <button class="calc-btn operator-btn" onclick="append('**2')">x²</button>
       </div>
       <div class="button-row">
         <button class="calc-btn number-btn" onclick="append('7')">7</button>
         <button class="calc-btn number-btn" onclick="append('8')">8</button>
         <button class="calc-btn number-btn" onclick="append('9')">9</button>
-        <button class="calc-btn operator-btn" onclick="append('*')">*</button>
+        <button class="calc-btn operator-btn" onclick="append('/')">/</button>
       </div>
       <div class="button-row">
         <button class="calc-btn number-btn" onclick="append('4')">4</button>
         <button class="calc-btn number-btn" onclick="append('5')">5</button>
         <button class="calc-btn number-btn" onclick="append('6')">6</button>
-        <button class="calc-btn operator-btn" onclick="append('-')">-</button>
+        <button class="calc-btn operator-btn" onclick="append('*')">*</button>
       </div>
       <div class="button-row">
         <button class="calc-btn number-btn" onclick="append('1')">1</button>
         <button class="calc-btn number-btn" onclick="append('2')">2</button>
         <button class="calc-btn number-btn" onclick="append('3')">3</button>
-        <button class="calc-btn operator-btn" onclick="append('+')">+</button>
+        <button class="calc-btn operator-btn" onclick="append('-')">-</button>
       </div>
       <div class="button-row">
         <button class="calc-btn number-btn" onclick="append('0')">0</button>
         <button class="calc-btn number-btn" onclick="append('.')">.</button>
         <button class="calc-btn equal-btn" onclick="calculate()">=</button>
-        <button class="calc-btn operator-btn" onclick="append('**2')">x²</button>
-        
+        <button class="calc-btn operator-btn" onclick="append('+')">+</button>
       </div>
       <div class="button-row">
         <button class="calc-btn switch-btn" onclick="switchCalc()">Scientific Mode</button>
@@ -176,21 +183,21 @@
       </div>
       <div class="button-row">
         <button class="calc-btn clear-btn" onclick="clearCalc()">AC</button>
-        <button class="calc-btn back-btn" onclick="backspace()">←</button>
+        <button class="calc-btn backspace-btn" onclick="backspace()">⌫</button>
         <button class="calc-btn operator-btn" onclick="append('(')">(</button>
         <button class="calc-btn operator-btn" onclick="append(')')">)</button>
       </div>
       <div class="button-row">
+        <button class="calc-btn scientific-btn" onclick="appendFunction('Math.sqrt(')">√</button>
         <button class="calc-btn scientific-btn" onclick="appendFunction('Math.sin(')">sin</button>
         <button class="calc-btn scientific-btn" onclick="appendFunction('Math.cos(')">cos</button>
         <button class="calc-btn scientific-btn" onclick="appendFunction('Math.tan(')">tan</button>
-        <button class="calc-btn scientific-btn" onclick="appendFunction('Math.log10(')">log</button>
       </div>
       <div class="button-row">
+        <button class="calc-btn scientific-btn" onclick="appendFunction('Math.log10(')">log</button>
         <button class="calc-btn scientific-btn" onclick="appendFunction('Math.log(')">ln</button>
-        <button class="calc-btn scientific-btn" onclick="append('**')">^</button>
-        <button class="calc-btn scientific-btn" onclick="appendFunction('Math.sqrt(')">√</button>
-        <button class="calc-btn scientific-btn" onclick="appendFunction('factorial(')">!</button>
+        <button class="calc-btn scientific-btn" onclick="append('!')">!</button>
+        <button class="calc-btn scientific-btn" onclick="append('^')">^</button>
       </div>
       <div class="button-row">
         <button class="calc-btn number-btn" onclick="append('7')">7</button>
@@ -223,62 +230,11 @@
   </div>
 
   <!-- Exit Button -->
-<button id="exitBtn" class="exit-btn">Exit</button>
-
-<style>
-  .exit-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #ff6b81;
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 12px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    transition: background 0.3s, transform 0.2s;
-    z-index: 20;
-  }
-
-  .exit-btn:hover {
-    background: #e55060;
-    transform: scale(1.05);
-  }
-
-  .exit-btn:active {
-    transform: scale(0.95);
-  }
-</style>
-
-<script>
-  document.getElementById('exitBtn').onclick = () => {
-    if (confirm('Are you sure you want to exit?')) {
-     window.location.href = 'about:blank'; 
-    }
-  };
-</script>
+  <button id="exitBtn" class="exit-btn">Exit</button>
 
   <script>
-    // Floating symbols
-    const symbols = ['+', '-', '×', '÷', '∑', '∫', 'π', '√', '!', '^'];
-    const welcome = document.getElementById('welcome');
-    for (let i = 0; i < 25; i++) {
-      const span = document.createElement('span');
-      span.className = 'symbol';
-      span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-      span.style.left = Math.random() * 100 + 'vw';
-      span.style.fontSize = (1 + Math.random() * 2) + 'rem';
-      span.style.animationDuration = (8 + Math.random() * 5) + 's';
-      span.style.animationDelay = (-Math.random() * 10) + 's';
-      welcome.appendChild(span);
-    }
-
-    // Welcome animation
-    window.onload = () => {
-      setTimeout(() => welcome.classList.add('split'), 1000);
-    };
+    // Welcome hide after 1.5s
+    setTimeout(() => document.getElementById('welcome').classList.add('hidden'), 1500);
 
     let currentCalc = 'basic';
     let expression = '';
@@ -287,73 +243,57 @@
       expression += val;
       updateDisplay();
     }
-
     function appendFunction(func) {
       expression += func;
       updateDisplay();
     }
-
     function clearCalc() {
       expression = '';
       updateDisplay();
     }
-
     function backspace() {
       expression = expression.slice(0, -1);
       updateDisplay();
     }
-
     function updateDisplay() {
-      const expEl = document.getElementById(currentCalc === 'basic' ? 'basicExpression' : 'sciExpression');
-      const resEl = document.getElementById(currentCalc === 'basic' ? 'basicResult' : 'sciResult');
-      expEl.innerText = expression;
+      let disp = currentCalc === 'basic' ? 'basic' : 'sci';
+      document.getElementById(disp + 'Expression').innerText = expression;
       try {
-        const res = eval(expression.replace(/factorial\(/g, 'factorial('));
-        resEl.innerText = res !== undefined ? res : '';
-      } catch {
-        resEl.innerText = '';
-      }
+        let res = eval(expression.replace(/!/g, ''));
+        document.getElementById(disp + 'Result').innerText = res ?? '';
+      } catch { document.getElementById(disp + 'Result').innerText = ''; }
     }
-
     function calculate() {
       try {
-        expression = eval(expression.replace(/factorial\(/g, 'factorial(')).toString();
+        let exp = expression.replace(/(\d+)!/g, (m, d) => {
+          let f = 1; for (let i = 1; i <= +d; i++) f *= i; return f;
+        });
+        let res = eval(exp.replace(/\^/g, '**'));
+        expression = res.toString();
         updateDisplay();
-      } catch {
-        alert('Invalid expression!');
-      }
+      } catch { alert('Invalid!'); }
     }
-
     function switchCalc() {
-      const basic = document.getElementById('basicCalculator');
-      const sci = document.getElementById('scientificCalculator');
-      basic.classList.toggle('active');
-      sci.classList.toggle('active');
-      expression = ''; // Clear when switching
-      currentCalc = basic.classList.contains('active') ? 'basic' : 'sci';
+      document.getElementById(currentCalc === 'basic' ? 'basicCalculator' : 'scientificCalculator').classList.remove('active');
+      currentCalc = currentCalc === 'basic' ? 'sci' : 'basic';
+      expression = '';
       updateDisplay();
+      document.getElementById(currentCalc === 'basic' ? 'basicCalculator' : 'scientificCalculator').classList.add('active');
     }
-
-    function factorial(n) {
-      n = eval(n);
-      if (n < 0) return NaN;
-      if (n === 0) return 1;
-      return n * factorial(n - 1);
-    }
-
     // Keyboard input
-    document.addEventListener('keydown', e => {
-      if (e.key.match(/[0-9+\-*/().^%!]/)) {
-        append(e.key === '^' ? '**' : e.key);
-      } else if (e.key === 'Enter') {
-        calculate();
-      } else if (e.key === 'Backspace') {
-        backspace();
-      } else if (e.key === 'Delete') {
-        clearCalc();
-      }
-    });
+    document.onkeydown = (e) => {
+      if ('0123456789.+-*/%^()'.includes(e.key)) append(e.key);
+      else if (e.key === 'Backspace') backspace();
+      else if (e.key === 'Delete') clearCalc();
+      else if (e.key === 'Enter') calculate();
+      else if (e.key === '^') append('^');
+      else if (e.key === '!') append('!');
+    };
+    // Exit button
+    document.getElementById('exitBtn').onclick = () => {
+      if (confirm('Exit Calculator?')) location.href = 'about:blank';
+    };
   </script>
-
 </body>
 </html>
+
