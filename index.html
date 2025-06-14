@@ -222,6 +222,44 @@
     </div>
   </div>
 
+  <!-- Exit Button -->
+<button id="exitBtn" class="exit-btn">Exit</button>
+
+<style>
+  .exit-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ff6b81;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transition: background 0.3s, transform 0.2s;
+    z-index: 20;
+  }
+
+  .exit-btn:hover {
+    background: #e55060;
+    transform: scale(1.05);
+  }
+
+  .exit-btn:active {
+    transform: scale(0.95);
+  }
+</style>
+
+<script>
+  document.getElementById('exitBtn').onclick = () => {
+    if (confirm('Are you sure you want to exit?')) {
+     window.location.href = 'about:blank'; 
+    }
+  };
+</script>
+
   <script>
     // Floating symbols
     const symbols = ['+', '-', '×', '÷', '∑', '∫', 'π', '√', '!', '^'];
